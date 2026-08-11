@@ -1,16 +1,23 @@
 #!/bin/bash
 
-DIR="/home/ubuntu/automatic-github-push"
+# Go to project directory
+cd /home/ubuntu/automatic-github-push || exit 1
 
-cd "$DIR" || exit 1
+# Find the next file number
+COUNT=$(find . -maxdepth 1 -name "file*.txt" | wc -l)
+NEXT=$((COUNT + 1))
 
-count=1
+# Create a new file
+FILE="file${NEXT}.txt"
+echo "Automatic file created on $(date)" > "$FILE"
 
-while [ -f "file$count.txt" ]
-do
-    ((count++))
-done
+echo "Created: $FILE"
 
-touch "file$count.txt"
+# Git operations
+git add .
 
-echo "Created: file$count.txt"
+git commit -m "Automatic update: $(date '+%Y-%m-%d %H:%M:%S')"
+
+git push origin master
+
+echo "GitHub push completed."
